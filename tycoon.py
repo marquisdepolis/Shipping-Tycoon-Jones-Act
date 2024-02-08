@@ -72,11 +72,37 @@ class Game:
         # Displaying current game status
         print(f"Current Budget: {self.budget}, Fleet Size: {len(self.fleet)}")
 
+    def complete_contract(self, contract, ship):
+        # Simulate completing the contract
+        fuel_cost_per_unit_distance = 10  # Simplified cost calculation
+        distance = self.calculate_distance(contract.origin, contract.destination)
+        fuel_cost = distance * fuel_cost_per_unit_distance
+
+        crew_salary = 5000  # Flat rate for simplification
+
+        total_cost = fuel_cost + crew_salary
+        net_earnings = contract.value - total_cost
+
+        if net_earnings > 0:
+            print(f"Contract completed. Net earnings: ${net_earnings}.")
+            self.budget += net_earnings
+        else:
+            print(f"Contract completed. Net loss: ${-net_earnings}.")
+            self.budget += net_earnings  # Subtracting, since net_earnings is negative
+
     def player_bid(self, contract):
         print(f"Contract: {contract.cargo_type} from {contract.origin.name} to {contract.destination.name}")
         print(f"Value: ${contract.value}, Jones Act Compliant: {contract.is_jones_compliant}")
         choice = input("Accept Contract? (y/n): ")
-        return choice.lower() == 'y'
+        if choice.lower() == 'y':
+            if len(self.fleet) > 0:
+                # Assume for simplicity the first ship in the fleet is used
+                self.complete_contract(contract, self.fleet[0])
+            else:
+                print("No ships available to complete the contract.")
+            return True
+        else:
+            return False
 
     def main_loop(self):
         self.display_status()
