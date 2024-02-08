@@ -34,6 +34,21 @@ class Game:
         self.budget = 1000000
         self.fleet = []
         print("Game started with budget:", self.budget)
+        self.attempt_to_buy_ship()
+    def attempt_to_buy_ship(self):
+        # Simplified ship buying logic
+        ship_cost = 200000  # Assuming a flat rate for simplicity
+        if self.budget >= ship_cost:
+            choice = input("Do you want to buy a ship for $200,000? (y/n): ")
+            if choice.lower() == 'y':
+                self.budget -= ship_cost
+                new_ship = Ship(f"Ship {len(self.fleet)+1}", "General Cargo", ship_cost, 20, 1000)
+                self.fleet.append(new_ship)
+                print(f"Bought new ship: {new_ship.name}. Remaining budget: {self.budget}")
+            else:
+                print("You decided not to buy a ship.")
+        else:
+            print("Not enough budget to buy a ship.")
 
     def generate_contract(self):
         origin = random.choice(self.ports)
@@ -65,12 +80,16 @@ class Game:
 
     def main_loop(self):
         self.display_status()
-        new_contract = self.generate_contract()
-        if self.player_bid(new_contract):
-            print("Contract accepted!")
-            # Placeholder for contract acceptance logic
+        if len(self.fleet) == 0:
+            print("You need at least one ship in your fleet to accept contracts.")
+            # Optionally, prompt the player to buy a ship here if budget allows
         else:
-            print("Contract rejected.")
+            new_contract = self.generate_contract()
+            if self.player_bid(new_contract):
+                print("Contract accepted!")
+                # Add logic to handle contract acceptance (e.g., deducting costs, calculating delivery time)
+            else:
+                print("Contract rejected.")
 
 if __name__ == "__main__":
     game = Game()
